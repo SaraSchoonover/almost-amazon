@@ -1,19 +1,26 @@
+// import firebase from 'firebase/app';
+// import 'firebase/auth';
 import signOut from '../helpers/auth/signOut';
+import { getAuthors, getFavoriteAuthors } from '../helpers/data/authorData';
+import { showAuthors, emptyAuthors } from '../components/authors';
+import { getBooks, getSaleBooks } from '../helpers/data/bookData';
+import { showBooks } from '../components/books';
 
 // navigation events
-const navigationEvents = () => {
+const navigationEvents = (uid) => {
   // LOGOUT BUTTON
   document.querySelector('#logout-button')
     .addEventListener('click', signOut);
 
   // BOOKS ON SALE
   document.querySelector('#sale-books').addEventListener('click', () => {
-    console.warn('Sale Books');
+    getSaleBooks().then((saleBooksArray) => showBooks(saleBooksArray));
   });
 
   // ALL BOOKS
   document.querySelector('#all-books').addEventListener('click', () => {
-    console.warn('All Books');
+    // GET ALL BOOKS on click
+    getBooks(uid).then((booksArray) => showBooks(booksArray));
   });
 
   // SEARCH
@@ -31,6 +38,19 @@ const navigationEvents = () => {
     }
   });
 
+  document.querySelector('#authors').addEventListener('click', () => {
+    getAuthors(uid).then((authors) => showAuthors(authors));
+  });
+
+  document.querySelector('#favorite-authors').addEventListener('click', () => {
+    getFavoriteAuthors().then((authorArray) => {
+      if (authorArray.length) {
+        showAuthors(authorArray);
+      } else {
+        emptyAuthors();
+      }
+    });
+  });
   // FIXME: STUDENTS Create an event listener for the Authors
   // 1. When a user clicks the authors link, make a call to firebase to get all authors
   // 2. Convert the response to an array because that is what the makeAuthors function is expecting
